@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4078728669571636"
+     crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobile Payment</title>
@@ -68,7 +70,56 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
+        .custom-modal-dialog {
+        max-width: 400px;
+        margin: auto;
+    }
 
+    .custom-modal-content {
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        background-color: #ffffff;
+        overflow: hidden;
+    }
+
+    .custom-modal-header {
+        background-color: #007bff;
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .custom-modal-title {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .custom-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .custom-modal-body {
+        padding: 20px;
+        font-size: 16px;
+        color: #333;
+        text-align: center;
+    }
+
+    .custom-modal-footer {
+        padding: 10px;
+        text-align: center;
+        background-color: #f8f9fa;
+    }
+
+    .custom-modal-footer .btn {
+        width: 100px;
+    }
     </style>
 </head>
 <body>
@@ -81,7 +132,7 @@
         <button class="btn btn-primary btn-pay" onclick="makePayment()">Pay</button>
 
         <footer class="footer">
-            <a href="https://wa.me/250725293342?text=Can%20you%20help%20me%20for%20assistance%20on%20how%20can%20I%20make%20payment" target="_blank"><i class="fab fa-whatsapp"></i> Contact via WhatsApp</a>
+            <a href="https://wa.me/250725414412?text=Can%20you%20help%20me%20for%20assistance%20on%20how%20can%20I%20make%20payment" target="_blank"><i class="fab fa-whatsapp"></i> Contact via WhatsApp</a>
         </footer>
     </div>
 
@@ -89,22 +140,49 @@
         Open Demo
     </button>
 
+    <!-- Add this modal structure inside the body -->
+
+
+
     <script>
         function makePayment() {
             const mobileNumber = document.getElementById('mobileNumber').value;
-             if (!mobileNumber) {
+    
+            // Validate if the mobile number is entered
+            if (!mobileNumber) {
                 alert("Please enter a mobile number.");
                 return;
             }
-
-            const ussdCode = `*182*1*2*0725293342*30000#`;
-            const encodedUssdCode = encodeURIComponent(ussdCode);
-            const ussdLink = `tel:${encodedUssdCode}`;
-            window.location.href = ussdLink;
-        }
-
-        function goToDemoPage() {
-            window.location.href = "paid.html"; // Replace with the actual path if needed.
+    
+            // Validate the length of the mobile number
+            if (mobileNumber.length >= 11) {
+                alert("Mobile number should be less than 11 digits.");
+                return;
+            }
+    
+            // Determine the USSD code based on the prefix
+            let ussdCode = '';
+            if (mobileNumber.startsWith('072') || mobileNumber.startsWith('073')) {
+                ussdCode = `*500*1*1*0725293342*60000#`;
+            } else if (mobileNumber.startsWith('078') || mobileNumber.startsWith('079')) {
+                ussdCode = `*182*1*2*0725293342*60000#`;
+            } else {
+                alert("Invalid mobile number. It should start with 072, 073, 078, or 079.");
+                return;
+            }
+    
+            // Check if the user is on a mobile device
+            const isMobileDevice = /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+    
+            if (isMobileDevice) {
+                // Encode the USSD code and open the phone app
+                const encodedUssdCode = encodeURIComponent(ussdCode);
+                const ussdLink = `tel:${encodedUssdCode}`;
+                window.location.href = ussdLink;
+            } else {
+                // Show an alert with the USSD code for laptop/desktop users
+                alert(`To make a payment, dial the following USSD code on your phone: ${ussdCode}`);
+            }
         }
     </script>
 </body>
